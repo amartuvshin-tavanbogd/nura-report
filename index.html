@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Нура — Жигж Гэрэлмаа · Эрүүл Мэндийн Тайлан</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --teal:#00B5A0; --teal-d:#008F7D; --teal-l:#E6FAF8; --teal-m:#B2EDE7;
+  --navy:#0D2535; --navy2:#163347;
+  --paper:#F8FAFC; --white:#FFFFFF;
+  --muted:#7A8FA6; --border:#E4ECF2; --ink:#1A2C3D;
+  --red:#E05252; --red-l:#FEF0F0;
+  --amber:#E08A1E; --amber-l:#FEF6EC;
+  --green:#1CA97A; --green-l:#EDFAF5;
+  --purple:#7B5EA7; --purple-l:#F3EEFF;
+}
+html,body{
+  background:#D8E3EC;
+  font-family:'Outfit',sans-serif;
+  color:var(--ink);
+  padding:18px 16px 28px;
+  display:flex;flex-direction:column;align-items:center;gap:24px;
+}
+
+/* ── PAGES ─────────────────────────────── */
+.page{
+  width:820px;background:var(--paper);
+  border-radius:18px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(13,37,53,.16),0 4px 12px rgba(13,37,53,.07);
+  animation:up .6s cubic-bezier(.22,.9,.36,1) both;
+}
+.page:nth-child(2){animation-delay:.1s;}
+@keyframes up{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+
+/* ── SHARED HEADER ──────────────────────── */
+.hdr{background:var(--navy);padding:14px 34px 12px;position:relative;overflow:hidden;}
+.hdr::before{content:'';position:absolute;top:-80px;right:-60px;width:260px;height:260px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,181,160,.18) 0%,transparent 70%);}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;}
+.logo img{height:38px;filter:brightness(0) invert(1);}
+.hdr-meta{display:flex;gap:8px;align-items:center;}
+.chip-sm{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);
+  border-radius:7px;padding:5px 12px;}
+.chip-sm .cl{font-size:.56rem;color:rgba(255,255,255,.38);letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px;}
+.chip-sm .cv{font-size:.72rem;color:rgba(255,255,255,.82);font-weight:500;}
+.chip-sm .cv.mono{font-family:'JetBrains Mono',monospace;font-size:.66rem;color:var(--teal);}
+.hdr-divider{height:1px;background:rgba(255,255,255,.08);margin:8px 0;}
+.hdr-bottom{display:flex;align-items:flex-end;justify-content:space-between;position:relative;z-index:1;}
+.page-label{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.35);margin-bottom:4px;}
+.hdr-title{font-size:1.1rem;font-weight:700;color:#fff;line-height:1.25;}
+.hdr-title span{font-size:.73rem;font-weight:300;color:rgba(255,255,255,.42);display:block;margin-top:3px;}
+.status-pill{display:flex;align-items:center;gap:7px;
+  border-radius:100px;padding:6px 14px;}
+.sp-green{background:rgba(28,169,122,.15);border:1px solid rgba(28,169,122,.35);}
+.sp-amber{background:rgba(224,138,30,.15);border:1px solid rgba(224,138,30,.35);}
+.s-dot{width:7px;height:7px;border-radius:50%;animation:blink 1.8s infinite;}
+.sd-g{background:#3DD9A4;} .sd-a{background:var(--goldf,#FFD580);}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.s-txt{font-size:.7rem;font-weight:600;letter-spacing:.03em;}
+.st-g{color:#5EEAB8;} .st-a{color:#FFCE6E;}
+
+/* ── SCORE + PATIENT ────────────────────── */
+.score-section{background:var(--white);padding:14px 34px;border-bottom:1px solid var(--border);
+  display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:stretch;}
+
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;}
+.gauge-svg-box{position:relative;width:160px;height:94px;}
+.gauge-svg-box svg{width:160px;height:94px;}
+
+.gauge-legend{margin-top:8px;display:flex;gap:4px;width:160px;}
+.gl-item{flex:1;text-align:center;}
+.gl-bar{height:4px;border-radius:4px;margin-bottom:3px;}
+.gl-lbl{font-size:.55rem;color:var(--muted);}
+.gl-lbl.active{font-weight:700;color:var(--green);}
+
+.score-breakdown{margin-top:10px;background:var(--paper);border:1px solid var(--border);
+  border-radius:10px;padding:9px 11px;width:160px;}
+.sb-title{font-size:.58rem;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-bottom:6px;}
+.sb-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.sb-row:last-child{margin-bottom:0;border-top:1px solid var(--border);padding-top:5px;margin-top:3px;}
+.sb-row span:first-child{font-size:.63rem;color:#4A5A6B;}
+.sb-val{font-size:.63rem;font-weight:700;font-family:'JetBrains Mono',monospace;}
+
+.patient-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.pf{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:9px 12px;}
+.pf .pl{font-size:.57rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px;}
+.pf .pv{font-size:.82rem;font-weight:700;color:var(--ink);}
+.pf .pv.mono{font-family:'JetBrains Mono',monospace;font-size:.74rem;color:var(--teal);}
+
+.summary-note{grid-column:1/-1;background:var(--green-l);border:1px solid rgba(28,169,122,.25);
+  border-radius:10px;padding:10px 14px;font-size:.73rem;color:#1A5E3A;line-height:1.6;}
+.summary-note strong{color:var(--teal-d);}
+
+/* ── VITALS STRIP ───────────────────────── */
+.vitals-strip{background:var(--navy2);padding:12px 34px;
+  display:grid;grid-template-columns:repeat(6,1fr);gap:0;}
+.vt{padding:0 14px;border-right:1px solid rgba(255,255,255,.08);text-align:center;}
+.vt:first-child{padding-left:0;text-align:left;}
+.vt:last-child{border-right:none;}
+.vt-l{font-size:.57rem;color:rgba(255,255,255,.38);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.vt-v{font-size:.9rem;font-weight:700;color:#fff;}
+.vt-u{font-size:.58rem;color:rgba(255,255,255,.4);}
+.vt-tag{display:inline-block;font-size:.58rem;padding:1px 7px;border-radius:100px;margin-top:3px;}
+.tag-ok{background:rgba(28,169,122,.2);color:#4DEBA0;}
+.tag-hi{background:rgba(224,82,82,.2);color:#FF9E9E;}
+.tag-lo{background:rgba(224,138,30,.2);color:#FFCE6E;}
+
+/* ── SECTION ────────────────────────────── */
+.section{padding:14px 34px 0;}
+.section:last-of-type{padding-bottom:12px;}
+.sec-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.sec-badge{background:var(--teal);color:#fff;font-size:.58rem;font-weight:700;
+  letter-spacing:.08em;padding:2px 8px;border-radius:5px;text-transform:uppercase;}
+.sec-badge.amber{background:var(--amber);}
+.sec-badge.red{background:var(--red);}
+.sec-badge.purple{background:var(--purple);}
+.sec-title{font-size:.9rem;font-weight:700;color:var(--ink);}
+.sec-rule{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+.sec-count{font-size:.65rem;color:var(--muted);white-space:nowrap;}
+
+/* ── LAB TABLE COMPACT ──────────────────── */
+.lab-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+.lab-group{background:var(--white);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;}
+.lg-head{background:var(--navy);padding:7px 12px;
+  display:flex;align-items:center;gap:6px;}
+.lg-icon{font-size:13px;}
+.lg-title{font-size:.68rem;font-weight:700;color:#fff;letter-spacing:.04em;}
+.lg-sub{font-size:.58rem;color:rgba(255,255,255,.38);margin-left:auto;}
+
+.lab-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;
+  align-items:center;padding:7px 12px;border-bottom:1px solid var(--border);}
+.lab-row:last-child{border-bottom:none;}
+.lab-row.flag-hi{background:linear-gradient(90deg,rgba(224,82,82,.04),transparent);}
+.lab-row.flag-lo{background:linear-gradient(90deg,rgba(224,138,30,.04),transparent);}
+
+.lr-name{font-size:.71rem;font-weight:500;color:var(--ink);}
+.lr-name .lr-sub{font-size:.6rem;color:var(--muted);font-weight:400;}
+.lr-val{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600;text-align:right;}
+.lr-val.ok{color:var(--green);} .lr-val.hi{color:var(--red);} .lr-val.lo{color:var(--amber);}
+
+.mini-bar{width:60px;height:6px;border-radius:100px;background:var(--border);
+  position:relative;overflow:visible;}
+.mini-fill{height:100%;border-radius:100px;position:absolute;top:0;left:0;}
+.mini-ptr{position:absolute;top:-4px;width:2px;height:14px;border-radius:1px;background:var(--muted);}
+.bar-ok .mini-fill{background:linear-gradient(90deg,var(--teal-m),var(--teal));}
+.bar-hi .mini-fill{background:linear-gradient(90deg,var(--amber),var(--red));}
+.bar-lo .mini-fill{background:var(--amber);}
+
+/* ── CONCERNS ───────────────────────────── */
+.concerns-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.concern-card{border-radius:12px;padding:12px 14px;border:1.5px solid;}
+.cc-red{background:var(--red-l);border-color:rgba(224,82,82,.3);}
+.cc-amber{background:var(--amber-l);border-color:rgba(224,138,30,.3);}
+.cc-purple{background:var(--purple-l);border-color:rgba(123,94,167,.25);}
+.cc-top{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.cc-icon{font-size:18px;width:32px;height:32px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cci-red{background:rgba(224,82,82,.12);}
+.cci-amber{background:rgba(224,138,30,.12);}
+.cci-purple{background:rgba(123,94,167,.12);}
+.cc-name{font-size:.76rem;font-weight:700;color:var(--ink);}
+.cc-sub{font-size:.63rem;color:var(--muted);}
+.cc-val{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:800;margin-bottom:3px;}
+.ccv-red{color:var(--red);} .ccv-amber{color:var(--amber);} .ccv-purple{color:var(--purple);}
+.cc-ref{font-size:.62rem;color:var(--muted);margin-bottom:7px;}
+.cc-why{font-size:.68rem;color:#3D4A58;line-height:1.5;background:rgba(255,255,255,.6);
+  border-radius:7px;padding:6px 8px;}
+
+/* ── FOOTER ──────────────────────────────── */
+.footer{background:var(--navy);padding:14px 34px;
+  display:flex;align-items:center;justify-content:space-between;}
+.footer-logo img{height:26px;filter:brightness(0) invert(1);opacity:.65;}
+.footer-center{font-size:.68rem;color:rgba(255,255,255,.35);font-style:italic;}
+.footer-doc .dn{font-size:.76rem;font-weight:600;color:#fff;}
+.footer-doc .dr{font-size:.6rem;color:rgba(255,255,255,.35);margin-top:2px;}
+.footer-doc .sig{margin-top:7px;border-top:1px solid rgba(255,255,255,.1);padding-top:5px;
+  font-size:.58rem;color:rgba(255,255,255,.2);font-family:'JetBrains Mono',monospace;}
+
+/* ── P2: SCREENING CARDS ────────────────── */
+.screen-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.sc-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;}
+.sc-head{padding:8px 14px;display:flex;align-items:center;gap:8px;}
+.sch-ok{background:linear-gradient(90deg,var(--green-l),#fff);}
+.sch-warn{background:linear-gradient(90deg,var(--amber-l),#fff);}
+.sch-red{background:linear-gradient(90deg,var(--red-l),#fff);}
+.sc-icon{font-size:16px;}
+.sc-name{font-size:.74rem;font-weight:700;color:var(--ink);}
+.sc-status{margin-left:auto;font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:100px;}
+.scs-ok{background:var(--green-l);color:var(--green);}
+.scs-warn{background:var(--amber-l);color:var(--amber);}
+.scs-red{background:var(--red-l);color:var(--red);}
+.sc-body{padding:9px 14px;font-size:.7rem;color:#4A5A6B;line-height:1.55;border-top:1px solid var(--border);}
+.sc-body strong{color:var(--ink);font-weight:600;}
+.sc-action{margin-top:7px;background:rgba(0,181,160,.06);border-left:3px solid var(--teal);
+  padding:6px 8px;border-radius:0 6px 6px 0;font-size:.67rem;color:var(--teal-d);}
+
+/* ── REC CARDS ──────────────────────────── */
+.rec-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.rec-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;}
+.rc-top{display:flex;align-items:center;gap:7px;margin-bottom:8px;}
+.rc-ico{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.ico-g{background:#E8F8F2;} .ico-b{background:#E8F2FE;} .ico-r{background:#FEF0F0;}
+.ico-y{background:#FEF6E8;} .ico-p{background:#F3EEFF;} .ico-t{background:var(--teal-l);}
+.rc-title{font-size:.72rem;font-weight:700;color:var(--ink);}
+.rc-items{display:flex;flex-direction:column;gap:4px;}
+.rc-item{display:flex;align-items:flex-start;gap:5px;font-size:.68rem;color:#4A5A6B;line-height:1.45;}
+.rc-item::before{content:'→';font-size:.62rem;color:var(--teal);font-weight:700;margin-top:1px;flex-shrink:0;}
+
+/* ── TIMELINE ───────────────────────────── */
+.tl{display:flex;position:relative;padding:0 10px;}
+.tl::before{content:'';position:absolute;top:18px;left:30px;right:30px;height:2px;
+  background:linear-gradient(90deg,var(--teal) 40%,var(--border) 100%);z-index:0;}
+.tl-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;z-index:1;}
+.tl-dot{width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:15px;border:2.5px solid;}
+.tld-done{background:var(--teal);border-color:var(--teal);filter:drop-shadow(0 0 6px rgba(0,181,160,.4));}
+.tld-next{background:var(--white);border-color:var(--teal);color:var(--teal);}
+.tld-later{background:var(--white);border-color:var(--border);color:var(--muted);}
+.tl-lbl{font-size:.63rem;font-weight:600;color:var(--ink);text-align:center;}
+.tl-sub{font-size:.59rem;color:var(--muted);text-align:center;line-height:1.35;}
+
+.divider{height:1px;background:var(--border);margin:0 34px;}
+
+/* ── DOCTOR NOTE ────────────────────────── */
+.doctor-note-section{background:var(--white);padding:14px 34px 16px;border-top:1px solid var(--border);}
+.dn-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+.dn-field{display:flex;flex-direction:column;gap:4px;}
+.dn-field label{font-size:.58rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;font-weight:600;}
+.dn-input{
+  background:var(--paper);border:1.5px solid var(--border);border-radius:8px;
+  padding:8px 11px;font-size:.76rem;color:var(--ink);font-family:'Outfit',sans-serif;
+  resize:none;outline:none;transition:border-color .2s;
+}
+.dn-input:focus{border-color:var(--teal);background:#fff;}
+.dn-input::placeholder{color:#B8C8D4;}
+.dn-textarea{min-height:70px;line-height:1.6;}
+.dn-sig-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px;}
+.dn-sig-field{display:flex;flex-direction:column;gap:4px;}
+.dn-sig-line{
+  border:none;border-bottom:1.5px solid var(--border);background:transparent;
+  padding:6px 0;font-size:.78rem;color:var(--ink);font-family:'Outfit',sans-serif;outline:none;
+}
+.dn-sig-line:focus{border-color:var(--teal);}
+.dn-ds-row{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;
+  background:linear-gradient(90deg,rgba(0,181,160,.06),transparent);
+  border-left:3px solid var(--teal);border-radius:0 8px 8px 0;}
+.dn-ds-badge{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;
+  color:var(--teal-d);background:var(--teal-l);padding:3px 10px;border-radius:6px;white-space:nowrap;}
+
+@media print{
+  html,body{background:#fff;padding:0;gap:0;}
+  .page{box-shadow:none;border-radius:0;animation:none;page-break-after:always;}
+  .page:last-child{page-break-after:auto;}
+  .dn-input,.dn-sig-line{background:transparent!important;border-color:#ccc!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+     PAGE 1
+════════════════════════════════════ -->
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-row">
+      <div class="logo"><img src="https://cdn.siro.mn/8422c574-cf93-42f8-9e60-030cfeccbd0e/6b55d15c-9c88-49e1-9b90-f6134ee7ac90.svg" alt="Нура"></div>
+      <div class="hdr-meta">
+        <div class="chip-sm"><div class="cl">TBG ID</div><div class="cv mono">TBGEA8CFC</div></div>
+        <div class="chip-sm"><div class="cl">Үзлэгийн огноо</div><div class="cv">2026.04.15</div></div>
+        <div class="chip-sm"><div class="cl">Баримт №</div><div class="cv mono">MEDON-2026-0415</div></div>
+      </div>
+    </div>
+    <div class="hdr-divider"></div>
+    <div class="hdr-bottom">
+      <div>
+        <div class="page-label">1 / 2 · Ерөнхий дүгнэлт ба шинжилгээ</div>
+        <div class="hdr-title">Эрүүл Мэндийн Иж Бүрэн Үзлэгийн Тайлан
+          <span>MedOn Medical · Эмч: Uyanga Tsogtgerel</span>
+        </div>
+      </div>
+      <div class="status-pill sp-green">
+        <div class="s-dot sd-g"></div>
+        <div class="s-txt st-g">Ерөнхийдөө Эрүүл</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCORE + PATIENT -->
+  <div class="score-section">
+    <div class="gauge-wrap">
+      <!-- Gauge -->
+      <div class="gauge-svg-box">
+        <svg viewBox="0 0 160 94">
+          <defs>
+            <linearGradient id="gBg" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   style="stop-color:#1CA97A;stop-opacity:.15"/>
+              <stop offset="55%"  style="stop-color:#E08A1E;stop-opacity:.15"/>
+              <stop offset="100%" style="stop-color:#E05252;stop-opacity:.15"/>
+            </linearGradient>
+            <linearGradient id="gFill" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   style="stop-color:#1CA97A"/>
+              <stop offset="55%"  style="stop-color:#E08A1E"/>
+              <stop offset="100%" style="stop-color:#E05252"/>
+            </linearGradient>
+          </defs>
+          <path d="M14,86 A66,66 0 0,1 146,86" fill="none" stroke="url(#gBg)" stroke-width="13" stroke-linecap="round"/>
+          <path d="M14,86 A66,66 0 0,1 146,86" fill="none" stroke="url(#gFill)" stroke-width="13" stroke-linecap="round"
+                stroke-dasharray="207" stroke-dashoffset="46"/>
+          <text x="7"   y="90" font-size="8" fill="#9DB0BE" font-family="JetBrains Mono,monospace" text-anchor="middle">0</text>
+          <text x="33"  y="48" font-size="8" fill="#9DB0BE" font-family="JetBrains Mono,monospace" text-anchor="middle">25</text>
+          <text x="80"  y="20" font-size="8" fill="#9DB0BE" font-family="JetBrains Mono,monospace" text-anchor="middle">50</text>
+          <text x="127" y="48" font-size="8" fill="#9DB0BE" font-family="JetBrains Mono,monospace" text-anchor="middle">75</text>
+          <text x="153" y="90" font-size="8" fill="#9DB0BE" font-family="JetBrains Mono,monospace" text-anchor="middle">100</text>
+          <line x1="80" y1="86" x2="131" y2="44" stroke="#1CA97A" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="80" cy="86" r="5" fill="white" stroke="#1CA97A" stroke-width="2.5"/>
+        </svg>
+        <div style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);text-align:center;">
+          <div style="font-size:1.85rem;font-weight:800;color:var(--green);line-height:1;">78</div>
+          <div style="font-size:.53rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;">/100 оноо</div>
+        </div>
+      </div>
+
+      <!-- legend -->
+      <div class="gauge-legend">
+        <div class="gl-item"><div class="gl-bar" style="background:var(--red)"></div><div class="gl-lbl">0–50<br>Муу</div></div>
+        <div class="gl-item"><div class="gl-bar" style="background:var(--amber)"></div><div class="gl-lbl">51–74<br>Дунд</div></div>
+        <div class="gl-item"><div class="gl-bar" style="background:var(--green)"></div><div class="gl-lbl active">75–100<br>Сайн ← Та</div></div>
+      </div>
+
+      <!-- ── YEAR TREND CHART ── -->
+      <div style="width:200px;margin-top:10px;background:var(--paper);border:1px solid var(--border);border-radius:12px;padding:10px 12px;">
+        <div style="font-size:.58rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:6px;">
+          📈 Жилийн харьцуулалт
+        </div>
+
+        <!-- SVG line chart -->
+        <svg viewBox="0 0 176 72" style="width:100%;overflow:visible;">
+          <defs>
+            <linearGradient id="lineGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#00B5A0;stop-opacity:.25"/>
+              <stop offset="100%" style="stop-color:#00B5A0;stop-opacity:0"/>
+            </linearGradient>
+          </defs>
+
+          <!-- grid lines -->
+          <line x1="0" y1="0"  x2="176" y2="0"  stroke="#E4ECF2" stroke-width="1" stroke-dasharray="3,3"/>
+          <line x1="0" y1="24" x2="176" y2="24" stroke="#E4ECF2" stroke-width="1" stroke-dasharray="3,3"/>
+          <line x1="0" y1="48" x2="176" y2="48" stroke="#E4ECF2" stroke-width="1" stroke-dasharray="3,3"/>
+          <line x1="0" y1="60" x2="176" y2="60" stroke="#E4ECF2" stroke-width="1" stroke-dasharray="3,3"/>
+
+          <!-- y-axis labels -->
+          <text x="0" y="-3"  font-size="6" fill="#B0BEC5" font-family="JetBrains Mono,monospace">100</text>
+          <text x="0" y="21"  font-size="6" fill="#B0BEC5" font-family="JetBrains Mono,monospace">75</text>
+          <text x="0" y="45"  font-size="6" fill="#B0BEC5" font-family="JetBrains Mono,monospace">50</text>
+          <text x="0" y="57"  font-size="6" fill="#B0BEC5" font-family="JetBrains Mono,monospace">38</text>
+
+          <!--
+            Data: 2024=68, 2025=72, 2026=78, 2027=85(target)
+            Scale: 0=y60(bottom), 100=y0(top) → y = 60 - (val/100)*60
+            2024 → y=60-(68/100)*60 = 60-40.8=19.2  x=26
+            2025 → y=60-(72/100)*60 = 60-43.2=16.8  x=70
+            2026 → y=60-(78/100)*60 = 60-46.8=13.2  x=114
+            2027 → y=60-(85/100)*60 = 60-51=9        x=158
+          -->
+
+          <!-- area fill -->
+          <polygon points="26,19.2 70,16.8 114,13.2 114,60 26,60" fill="url(#lineGrad)"/>
+
+          <!-- dashed projection area -->
+          <polygon points="114,13.2 158,9 158,60 114,60" fill="rgba(0,181,160,.06)"/>
+
+          <!-- solid line 2024→2026 -->
+          <polyline points="26,19.2 70,16.8 114,13.2"
+            fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+          <!-- dashed line 2026→2027 projection -->
+          <line x1="114" y1="13.2" x2="158" y2="9"
+            stroke="var(--teal)" stroke-width="1.8" stroke-dasharray="4,3" stroke-linecap="round" opacity=".6"/>
+
+          <!-- dots -->
+          <circle cx="26"  cy="19.2" r="3.5" fill="white" stroke="#7A8FA6" stroke-width="1.8"/>
+          <circle cx="70"  cy="16.8" r="3.5" fill="white" stroke="#7A8FA6" stroke-width="1.8"/>
+          <circle cx="114" cy="13.2" r="5"   fill="var(--teal)" stroke="white" stroke-width="2"/>
+          <circle cx="158" cy="9"    r="3.5" fill="white" stroke="var(--teal)" stroke-width="1.8" stroke-dasharray="2,1.5"/>
+
+          <!-- score labels above dots -->
+          <text x="26"  y="13"  font-size="7.5" fill="#7A8FA6"      font-family="JetBrains Mono,monospace" text-anchor="middle">68</text>
+          <text x="70"  y="10.5" font-size="7.5" fill="#7A8FA6"     font-family="JetBrains Mono,monospace" text-anchor="middle">72</text>
+          <text x="114" y="6.5"  font-size="8.5" fill="var(--teal)" font-family="JetBrains Mono,monospace" font-weight="700" text-anchor="middle">78</text>
+          <text x="158" y="3"    font-size="7.5" fill="var(--teal)" font-family="JetBrains Mono,monospace" text-anchor="middle" opacity=".7">85?</text>
+
+          <!-- x-axis labels -->
+          <text x="26"  y="70" font-size="7" fill="#7A8FA6" font-family="Outfit,sans-serif" text-anchor="middle">2024</text>
+          <text x="70"  y="70" font-size="7" fill="#7A8FA6" font-family="Outfit,sans-serif" text-anchor="middle">2025</text>
+          <text x="114" y="70" font-size="7.5" fill="var(--teal)" font-family="Outfit,sans-serif" font-weight="700" text-anchor="middle">2026</text>
+          <text x="158" y="70" font-size="7" fill="var(--teal)" font-family="Outfit,sans-serif" text-anchor="middle" opacity=".65">2027</text>
+
+          <!-- "Одоо" label -->
+          <rect x="90" y="13.2" width="26" height="10" rx="3" fill="var(--teal)" opacity=".12"/>
+          <text x="103" y="20.5" font-size="5.8" fill="var(--teal-d)" font-family="Outfit,sans-serif" font-weight="600" text-anchor="middle">Одоо</text>
+
+          <!-- "Таргет" label -->
+          <rect x="135" y="9" width="28" height="10" rx="3" fill="rgba(0,181,160,.08)" stroke="rgba(0,181,160,.3)" stroke-width=".8"/>
+          <text x="149" y="16.2" font-size="5.8" fill="var(--teal-d)" font-family="Outfit,sans-serif" font-weight="600" text-anchor="middle">Таргет</text>
+        </svg>
+
+        <!-- delta badge -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;border-top:1px solid var(--border);padding-top:7px;">
+          <div style="font-size:.62rem;color:var(--muted);">Өмнөх жилээс</div>
+          <div style="display:flex;align-items:center;gap:4px;background:var(--green-l);border:1px solid rgba(28,169,122,.25);border-radius:6px;padding:2px 8px;">
+            <span style="font-size:.7rem;color:var(--green);font-weight:700;">↑ +6</span>
+            <span style="font-size:.6rem;color:var(--green);">оноо</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- breakdown -->
+      <div class="score-breakdown" style="width:200px;">
+        <div class="sb-title">Яаж тооцов?</div>
+        <div class="sb-row"><span>👂 Сонсгол</span><span class="sb-val" style="color:var(--red)">−12</span></div>
+        <div class="sb-row"><span>💉 LDL холестерин</span><span class="sb-val" style="color:var(--amber)">−6</span></div>
+        <div class="sb-row"><span>🔬 Умайн хүзүү</span><span class="sb-val" style="color:var(--amber)">−4</span></div>
+        <div class="sb-row"><span>✅ Бусад хэвийн</span><span class="sb-val" style="color:var(--green)">100</span></div>
+        <div class="sb-row"><span style="font-weight:700;color:var(--ink)">Нийт оноо</span><span class="sb-val" style="color:var(--green);font-size:.7rem">78/100</span></div>
+      </div>
+    </div>
+
+    <!-- Patient grid -->
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div class="patient-grid">
+        <div class="pf"><div class="pl">Овог, нэр</div><div class="pv">Жигж Гэрэлмаа</div></div>
+        <div class="pf"><div class="pl">Нас / Хүйс</div><div class="pv">49 нас · Эмэгтэй</div></div>
+        <div class="pf"><div class="pl">TBG ID</div><div class="pv mono">TBGEA8CFC</div></div>
+        <div class="pf"><div class="pl">Төрсөн огноо</div><div class="pv">1977.02.28</div></div>
+        <div class="pf"><div class="pl">Өндөр / Жин</div><div class="pv">157 см · 61 кг</div></div>
+        <div class="pf"><div class="pl">BMI</div><div class="pv" style="color:var(--green)">24.7 <span style="font-size:.65rem;font-weight:400">Хэвийн</span></div></div>
+      </div>
+      <div class="summary-note" style="flex:1;">
+        💚 <strong>Ерөнхий байдал сайн.</strong> Ихэнх шинжилгээ хэвийн хэмжээнд байна. Гурван зүйлд анхаарал хандуулах шаардлагатай: <strong>сонсголын асуудал, LDL холестерин бага зэрэг ихэссэн, умайн хүзүүний нэмэлт шинжилгээ</strong> хийлгэх шаардлагатай. Санаа зовох зүйл биш — эрт илрүүлсэн нь хамгийн том давуу тал!
+      </div>
+    </div>
+  </div>
+
+  <!-- VITALS -->
+  <div class="vitals-strip">
+    <div class="vt">
+      <div class="vt-l">Цусны даралт</div>
+      <div class="vt-v">109<span class="vt-u">/</span>76</div>
+      <div class="vt-u">mmHg</div>
+      <span class="vt-tag tag-ok">✓ Хэвийн</span>
+    </div>
+    <div class="vt">
+      <div class="vt-l">Зүрхний цохилт</div>
+      <div class="vt-v">81</div>
+      <div class="vt-u">bpm</div>
+      <span class="vt-tag tag-ok">✓ Хэвийн</span>
+    </div>
+    <div class="vt">
+      <div class="vt-l">Жин / BMI</div>
+      <div class="vt-v">61<span class="vt-u"> кг</span></div>
+      <div class="vt-u">BMI 24.7</div>
+      <span class="vt-tag tag-ok">✓ Хэвийн</span>
+    </div>
+    <div class="vt">
+      <div class="vt-l">H.Pylori</div>
+      <div class="vt-v">10</div>
+      <div class="vt-u">DPM (0–99)</div>
+      <span class="vt-tag tag-ok">✓ Сөрөг</span>
+    </div>
+    <div class="vt">
+      <div class="vt-l">Гепатит B/C</div>
+      <div class="vt-v" style="font-size:.78rem">HBsAg / HCV</div>
+      <div class="vt-u">0.031 / 0.142</div>
+      <span class="vt-tag tag-ok">✓ Сөрөг</span>
+    </div>
+    <div class="vt">
+      <div class="vt-l">ECG</div>
+      <div class="vt-v" style="font-size:.78rem">Sinus</div>
+      <div class="vt-u">rhythm</div>
+      <span class="vt-tag tag-ok">✓ Хэвийн</span>
+    </div>
+  </div>
+
+  <div class="divider" style="margin-top:0;"></div>
+
+  <!-- CONCERNS -->
+  <div class="section" style="padding-top:10px;">
+    <div class="sec-head">
+      <div class="sec-badge amber">Анхаарах</div>
+      <div class="sec-title">Анхаарал шаардлагатай 3 зүйл</div>
+      <div class="sec-rule"></div>
+      <div class="sec-count">Бусад 40+ үзүүлэлт хэвийн ✓</div>
+    </div>
+    <div class="concerns-grid">
+      <div class="concern-card cc-red">
+        <div class="cc-top">
+          <div class="cc-icon cci-red">👂</div>
+          <div><div class="cc-name">Сонсгол</div><div class="cc-sub">Сонсголын үзлэг</div></div>
+        </div>
+        <div class="cc-val ccv-red">Хэвийн бус</div>
+        <div class="cc-ref">Хэвийн: Норм хэмжээнд байх ёстой</div>
+        <div class="cc-why">🤔 <strong>Энэ юу гэсэн үг?</strong> Сонсголын шалгалтанд тэнцсэнгүй. Чихний мэргэжлийн эмчид нарийвчилсан үзлэг хийлгэх шаардлагатай.</div>
+      </div>
+      <div class="concern-card cc-amber">
+        <div class="cc-top">
+          <div class="cc-icon cci-amber">🩸</div>
+          <div><div class="cc-name">LDL Холестерин</div><div class="cc-sub">Муу холестерин</div></div>
+        </div>
+        <div class="cc-val ccv-amber">121 mg/dL</div>
+        <div class="cc-ref">Хэвийн: &lt;100 mg/dL (Оптимал)</div>
+        <div class="cc-why">🤔 <strong>Яагаад чухал вэ?</strong> Муу холестерин бага зэрэг ихэссэн. Судасны хана нарийсах эрсдэл үүсч болно. Хоол дэглэмээр засагдана.</div>
+      </div>
+      <div class="concern-card cc-purple">
+        <div class="cc-top">
+          <div class="cc-icon cci-purple">🔬</div>
+          <div><div class="cc-name">Умайн хүзүүний үзлэг</div><div class="cc-sub">Кольпоскопийн дүгнэлт</div></div>
+        </div>
+        <div class="cc-val ccv-purple">Нэмэлт шинжилгээ</div>
+        <div class="cc-ref">Зөвлөмж: Эсийн шинжилгээ + HPV</div>
+        <div class="cc-why">🤔 <strong>Энэ юу гэсэн үг?</strong> Хавдрын эрсдэл бага ч HPV тест, эсийн шинжилгээ өгч баталгаажуулах шаардлагатай.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB RESULTS -->
+  <div class="section" style="padding-top:10px;padding-bottom:12px;">
+    <div class="sec-head">
+      <div class="sec-badge">Шинжилгээ</div>
+      <div class="sec-title">Лабораторийн бүрэн үр дүн</div>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="lab-grid">
+
+      <!-- Lipid -->
+      <div class="lab-group">
+        <div class="lg-head"><div class="lg-icon">🩸</div><div class="lg-title">Липидийн профайл</div><div class="lg-sub">Өөх тос</div></div>
+        <div class="lab-row">
+          <div class="lr-name">Нийт холестерин<div class="lr-sub">Total Cholesterol</div></div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="mini-bar bar-ok"><div class="mini-fill" style="width:60%"></div><div class="mini-ptr" style="left:60%"></div></div>
+          </div>
+          <div class="lr-val ok">193 <small>mg/dL</small></div>
+        </div>
+        <div class="lab-row flag-hi">
+          <div class="lr-name">LDL холестерин<div class="lr-sub">Муу холестерин</div></div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="mini-bar bar-hi"><div class="mini-fill" style="width:75%"></div><div class="mini-ptr" style="left:75%"></div></div>
+          </div>
+          <div class="lr-val hi">121 <small>mg/dL</small></div>
+        </div>
+        <div class="lab-row">
+          <div class="lr-name">HDL холестерин<div class="lr-sub">Сайн холестерин</div></div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="mini-bar bar-ok"><div class="mini-fill" style="width:55%"></div></div>
+          </div>
+          <div class="lr-val ok">55 <small>mg/dL</small></div>
+        </div>
+        <div class="lab-row flag-hi">
+          <div class="lr-name">nonHDL-C<div class="lr-sub">&lt;130 оптимал</div></div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="mini-bar bar-hi"><div class="mini-fill" style="width:68%"></div><div class="mini-ptr" style="left:68%"></div></div>
+          </div>
+          <div class="lr-val lo">138 <small>mg/dL</small></div>
+        </div>
+        <div class="lab-row">
+          <div class="lr-name">Триглицерид<div class="lr-sub">Triglyceride</div></div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="mini-bar bar-ok"><div class="mini-fill" style="width:40%"></div></div>
+          </div>
+          <div class="lr-val ok">85 <small>mg/dL</small></div>
+        </div>
+      </div>
+
+      <!-- Liver -->
+      <div class="lab-group">
+        <div class="lg-head"><div class="lg-icon">🫀</div><div class="lg-title">Элэгний үйл ажиллагаа</div><div class="lg-sub">Liver Panel</div></div>
+        <div class="lab-row">
+          <div class="lr-name">AST (GOT)<div class="lr-sub">&lt;35 U/L</div></div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="mini-bar bar-ok"><div class="mini-fill" style="width:46%"></div></div>
+          </div>
+          <div class="lr-val ok">16 <small>U/L</small></div>
+        </div>
+        <div class="lab-row">
+          <div class="lr-name">ALT (GPT)<div class="lr-sub">&lt;35 U/L</div></div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="mini-bar bar-ok"><div class="mini-fill" style="width:43%"></div></div>
+          </div>
+          <div class="lr-val ok">15 <small>U/L</small></div>
+        </div>
+        <div class="lab-row">
+          <div class="lr-name">GGT<div class="lr-sub">&lt;50 U/L</div></div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="mini-bar bar-ok"><div class="mini-fill" style="width:30%"></div></div>
+          </div>
+          <div class="lr-val ok">15 <small>U/L</small></div>
+        </div>
+        <div class="lab-row">
+          <div class="lr-name">Нийт уураг<div class="lr-sub">Total Protein 6.0–8.3</div></div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="mini-bar bar-ok"><div class="mini-fill" style="width:52%"></div></div>
+          </div>
+          <div class="lr-val ok">7.2 <small>g/dL</small></div>
+        </div>
+        <div class="lab-row">
+          <div class="lr-name">Альбумин<div class="lr-sub">3.5–5.2 g/dL</div></div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="mini-bar bar-ok"><div class="mini-fill" style="width:1%"></div><div class="mini-ptr" style="left:1%"></div></div>
+          </div>
+          <div class="lr-val ok">3.5 <small>g/dL</small></div>
+        </div>
+      </div>
+
+      <!-- CBC compact -->
+      <div class="lab-group">
+        <div class="lg-head"><div class="lg-icon">🔴</div><div class="lg-title">Цусны ерөнхий шинжилгээ</div><div class="lg-sub">CBC</div></div>
+        <div class="lab-row">
+          <div class="lr-name">Гемоглобин (HGB)<div class="lr-sub">12–15 g/dL (Эм)</div></div>
+          <div></div><div class="lr-val ok">13.2 <small>g/dL</small></div>
+        </div>
+        <div class="lab-row">
+          <div class="lr-name">Улаан цус (RBC)<div class="lr-sub">3.9–4.8 (Эм)</div></div>
+          <div></div><div class="lr-val ok">4.57 <small>10⁶/µL</small></div>
+        </div>
+        <div class="lab-row">
+          <div class="lr-name">Цагаан цус (WBC)<div class="lr-sub">4.0–11.0 K/uL</div></div>
+          <div></div><div class="lr-val ok">5.50 <small>K/uL</small></div>
+        </div>
+        <div class="lab-row">
+          <div class="lr-name">Ялтас (PLT)<div class="lr-sub">150–400 10³/µL</div></div>
+          <div></div><div class="lr-val ok">267 <small>10³/µL</small></div>
+        </div>
+        <div class="lab-row">
+          <div class="lr-name">Нейтрофил / Лимфоцит<div class="lr-sub">40–80% / 20–40%</div></div>
+          <div></div><div class="lr-val ok">63.3 / 24.5 <small>%</small></div>
+        </div>
+      </div>
+
+      <!-- Kidney + Urine -->
+      <div class="lab-group">
+        <div class="lg-head"><div class="lg-icon">🫘</div><div class="lg-title">Бөөр ба Шээсний шинжилгээ</div><div class="lg-sub">Kidney · Urine</div></div>
+        <div class="lab-row">
+          <div class="lr-name">eGFR (Бөөрний үйл ажиллагаа)<div class="lr-sub">≥90 Хэвийн</div></div>
+          <div></div><div class="lr-val ok">106 <small>mL/min</small></div>
+        </div>
+        <div class="lab-row">
+          <div class="lr-name">Шээсний хүчил (Uric Acid)<div class="lr-sub">2.5–6.0 Эм</div></div>
+          <div></div><div class="lr-val ok">5.7 <small>mg/dL</small></div>
+        </div>
+        <div class="lab-row">
+          <div class="lr-name">Креатинин<div class="lr-sub">0.6–1.0 Эм</div></div>
+          <div></div><div class="lr-val ok">0.70 <small>mg/dL</small></div>
+        </div>
+        <div class="lab-row">
+          <div class="lr-name">BUN (Цусны мочевин)<div class="lr-sub">7.0–20.0 mg/dL</div></div>
+          <div></div><div class="lr-val ok">15.5 <small>mg/dL</small></div>
+        </div>
+        <div class="lab-row">
+          <div class="lr-name">Шээсний шинжилгээ<div class="lr-sub">Urine Analysis</div></div>
+          <div></div><div class="lr-val ok" style="font-size:.65rem">Бүгд хэвийн</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER P1 -->
+  <div class="footer">
+    <div class="footer-logo"><img src="https://cdn.siro.mn/8422c574-cf93-42f8-9e60-030cfeccbd0e/6b55d15c-9c88-49e1-9b90-f6134ee7ac90.svg" alt="Нура"></div>
+    <div class="footer-center">MedOn Medical · 2026.04.15 · Хуудас 1/2</div>
+    <div class="footer-doc">
+      <div class="dn">Uyanga Tsogtgerel</div>
+      <div class="dr">Эмч · MedOn Medical · 2026.04.15 17:14</div>
+      <div class="sig">TBG ID: TBGEA8CFC · DS: K86</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     PAGE 2
+════════════════════════════════════ -->
+<div class="page">
+
+  <!-- HEADER P2 -->
+  <div class="hdr">
+    <div class="hdr-row">
+      <div class="logo"><img src="https://cdn.siro.mn/8422c574-cf93-42f8-9e60-030cfeccbd0e/6b55d15c-9c88-49e1-9b90-f6134ee7ac90.svg" alt="Нура"></div>
+      <div class="hdr-meta">
+        <div class="chip-sm"><div class="cl">Нэр</div><div class="cv">Жигж Гэрэлмаа</div></div>
+        <div class="chip-sm"><div class="cl">TBG ID</div><div class="cv mono">TBGEA8CFC</div></div>
+        <div class="chip-sm"><div class="cl">Огноо</div><div class="cv">2026.04.15</div></div>
+      </div>
+    </div>
+    <div class="hdr-divider"></div>
+    <div class="hdr-bottom">
+      <div>
+        <div class="page-label">2 / 2 · Оношилгоо, зөвлөмж ба дараагийн алхам</div>
+        <div class="hdr-title">Оношилгооны Дүгнэлт ба Эмчийн Зөвлөмж
+          <span>Эрүүл мэндийн мэдлэггүй хүнд ойлгомжтой байдлаар тайлбарлав</span>
+        </div>
+      </div>
+      <div class="status-pill sp-amber">
+        <div class="s-dot" style="background:#FFD580;animation:blink 1.8s infinite;"></div>
+        <div class="s-txt" style="color:#FFD580;">3 зүйл анхаарах</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREENING -->
+  <div class="section" style="padding-top:12px;">
+    <div class="sec-head">
+      <div class="sec-badge purple">Оношилгоо</div>
+      <div class="sec-title">Оношилгооны үзлэгүүдийн дүгнэлт</div>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="screen-grid">
+
+      <div class="sc-card">
+        <div class="sc-head sch-warn">
+          <div class="sc-icon">👂</div>
+          <div class="sc-name">Сонсголын үзлэг</div>
+          <div class="sc-status scs-red">⚠ Хэвийн бус</div>
+        </div>
+        <div class="sc-body">
+          Сонсголын шалгалтанд <strong>тэнцсэнгүй</strong>. Нарийн мэргэжлийн чихний эмчид хандаж нарийвчилсан шалгалт хийлгэх шаардлагатай.
+          <div class="sc-action">→ Дараагийн алхам: Чихний мэргэжлийн эмчид үзүүлэх</div>
+        </div>
+      </div>
+
+      <div class="sc-card">
+        <div class="sc-head sch-warn">
+          <div class="sc-icon">🔬</div>
+          <div class="sc-name">Кольпоскопийн үзлэг</div>
+          <div class="sc-status scs-warn">📋 Нэмэлт шаардлагатай</div>
+        </div>
+        <div class="sc-body">
+          Умайн хүзүүний <strong>хавдрын магадлал бага</strong>. Гэсэн ч 1 цагт нимгэн өөрчлөлт илэрсэн тул баталгаажуулах шаардлагатай.
+          <div class="sc-action">→ Умайн хүзүүний эсийн шинжилгээ + HPV genotype тест өгөх</div>
+        </div>
+      </div>
+
+      <div class="sc-card">
+        <div class="sc-head sch-ok">
+          <div class="sc-icon">❤️</div>
+          <div class="sc-name">ECG (Зүрхний цахилгаан бичлэг)</div>
+          <div class="sc-status scs-ok">✓ Хэвийн</div>
+        </div>
+        <div class="sc-body">
+          <strong>Синусийн хэвийн ритм</strong>. Зүрхний тэнхлэг хэвийн. Зүрхний үйл ажиллагаа сайн байна.
+          <div class="sc-action" style="background:rgba(28,169,122,.08);border-color:var(--green);">→ Жил бүр үзлэгт орох</div>
+        </div>
+      </div>
+
+      <div class="sc-card">
+        <div class="sc-head sch-ok">
+          <div class="sc-icon">👁️</div>
+          <div class="sc-name">Нүдний үзлэг</div>
+          <div class="sc-status scs-warn">💧 Хуурай нүд</div>
+        </div>
+        <div class="sc-body">
+          Харааны хурц байдал <strong>OD/OS = 1.0/1.0</strong> — маш сайн. Зөвхөн нүдний хальс (pinguecula) бага зэрэг улайлтай.
+          <div class="sc-action">→ Хиймэл нулимс өдөрт 4–6 удаа дусаах · 20/20/20 дүрэм баримтлах</div>
+        </div>
+      </div>
+
+      <div class="sc-card">
+        <div class="sc-head sch-ok">
+          <div class="sc-icon">🫁</div>
+          <div class="sc-name">Хэвлийн Хэт авианы үзлэг</div>
+          <div class="sc-status scs-ok">✓ Хэвийн</div>
+        </div>
+        <div class="sc-body">
+          <strong>Элэг, цөс, нойр булчирхай, дэлүү, бөөр</strong> — бүгд хэмжээ хэвийн, голомтот өөрчлөлтгүй. Эрхтэн тус бүр сайн байна.
+          <div class="sc-action" style="background:rgba(28,169,122,.08);border-color:var(--green);">→ Жил бүр хяналтын үзлэгт орох</div>
+        </div>
+      </div>
+
+      <div class="sc-card">
+        <div class="sc-head sch-ok">
+          <div class="sc-icon">⚖️</div>
+          <div class="sc-name">Биеийн бүтцийн шинжилгээ (Tanita)</div>
+          <div class="sc-status scs-ok">✓ Хэвийн</div>
+        </div>
+        <div class="sc-body">
+          BMI <strong>24.6</strong> — хэвийн жингийн дунд хэсэгт байна. Биеийн өөхний хэмжээ хяналттай байна.
+          <div class="sc-action" style="background:rgba(28,169,122,.08);border-color:var(--green);">→ Одоогийн жинг хадгалах, хөдөлгөөн хийх</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider" style="margin-top:8px;"></div>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="section" style="padding-top:10px;">
+    <div class="sec-head">
+      <div class="sec-badge">Зөвлөмж</div>
+      <div class="sec-title">Эмчийн зөвлөмж — өдөр тутамдаа хийх өөрчлөлт</div>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="rec-grid">
+      <div class="rec-card">
+        <div class="rc-top"><div class="rc-ico ico-g">🥗</div><div class="rc-title">Хоолны дэглэм</div></div>
+        <div class="rc-items">
+          <div class="rc-item">Тавагны ½ — жимс, ногоо · ¼ — уураг · ¼ — нүүрс ус</div>
+          <div class="rc-item">Тахианы цээж, загас (7 хоногт 2 өдөр) хэрэглэх</div>
+          <div class="rc-item">Улаан мах, транс тосноос аль болох татгалзах</div>
+          <div class="rc-item">Өдөрт 400–500 гр жимс, хүнсний ногоо идэх</div>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rc-top"><div class="rc-ico ico-t">🌾</div><div class="rc-title">Эслэг ба Омега</div></div>
+        <div class="rc-items">
+          <div class="rc-item">Өдөрт 25–30 гр эслэг: овъёос, алим, лууван</div>
+          <div class="rc-item">Омега-6: хушга, самар, авокадо тос хэрэглэх</div>
+          <div class="rc-item">Омега-9: оливын, канолын тос сонгох</div>
+          <div class="rc-item">Бүхэл үрийн бүтээгдэхүүн, бор будаа нэмэх</div>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rc-top"><div class="rc-ico ico-b">🏃</div><div class="rc-title">Хөдөлгөөн</div></div>
+        <div class="rc-items">
+          <div class="rc-item">Дунд эрчтэй дасгал 7 хоногт 300 мин (4–5 өдөр)</div>
+          <div class="rc-item">Эрчтэй аэробик (гүйлт, сэлэлт) 150 мин/7 хоног</div>
+          <div class="rc-item">LDL бууруулахад аэробик дасгал хамгийн үр дүнтэй</div>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rc-top"><div class="rc-ico ico-y">😴</div><div class="rc-title">Нойр ба амрах</div></div>
+        <div class="rc-items">
+          <div class="rc-item">Хоногт 7–8 цаг унтах — дархлаа, бодисын солилцоонд чухал</div>
+          <div class="rc-item">Унтах, сэрэх цагаа тогтмолжуулах</div>
+          <div class="rc-item">Нүдний 20/20/20 дүрэм: 20 мин → 20 сек → 6м зай</div>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rc-top"><div class="rc-ico ico-b">💧</div><div class="rc-title">Нүдний арчилгаа</div></div>
+        <div class="rc-items">
+          <div class="rc-item">Хиймэл нулимс өдөрт 4–6 удаа тогтмол дусаах</div>
+          <div class="rc-item">Refresh tears / Blink / Wellfresh аль нэгийг сонгох</div>
+          <div class="rc-item">Гадуур UV400 хамгаалалттай нарны шил зүүх</div>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rc-top"><div class="rc-ico ico-p">🔬</div><div class="rc-title">Нэмэлт шинжилгээ</div></div>
+        <div class="rc-items">
+          <div class="rc-item">Умайн хүзүүний эсийн шинжилгээ өгөх</div>
+          <div class="rc-item">HPV genotype тест хийлгэх</div>
+          <div class="rc-item">Чихний мэргэжлийн эмчид сонсголын нарийн шалгалт хийлгэх</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider" style="margin-top:8px;"></div>
+
+  <!-- TIMELINE -->
+  <div class="section" style="padding-top:10px;padding-bottom:12px;">
+    <div class="sec-head">
+      <div class="sec-badge">Хяналт</div>
+      <div class="sec-title">Дараагийн алхмуудын хуваарь</div>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="tl">
+      <div class="tl-step">
+        <div class="tl-dot tld-done">✓</div>
+        <div class="tl-lbl">Өнөөдөр</div>
+        <div class="tl-sub">Иж бүрэн үзлэг<br>хийгдсэн</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot tld-next">🔬</div>
+        <div class="tl-lbl">Энэ долоо хоног</div>
+        <div class="tl-sub">Умайн хүзүүний<br>эсийн шинжилгээ</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot tld-next">🧬</div>
+        <div class="tl-lbl">Удахгүй</div>
+        <div class="tl-sub">HPV genotype<br>тест өгөх</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot tld-next">👂</div>
+        <div class="tl-lbl">Удахгүй</div>
+        <div class="tl-sub">Чихний эмчид<br>үзүүлэх</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot tld-later">🏃</div>
+        <div class="tl-lbl">Өдөр бүр</div>
+        <div class="tl-sub">Дасгал хөдөлгөөн<br>хоолны дэглэм</div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot tld-later">📋</div>
+        <div class="tl-lbl">1 жилийн дараа</div>
+        <div class="tl-sub">Жилийн ээлжит<br>үзлэг</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider" style="margin-top:8px;"></div>
+
+  <!-- DOCTOR NOTE -->
+  <div class="doctor-note-section">
+    <div class="sec-head" style="margin-bottom:0;">
+      <div class="sec-badge" style="background:var(--navy);">👨‍⚕️ Эмчийн Дүгнэлт</div>
+      <div class="sec-title">Эмчийн нэмэлт тэмдэглэл ба дүгнэлт</div>
+      <div class="sec-rule"></div>
+    </div>
+
+    <div class="dn-ds-row">
+      <span class="dn-ds-badge">DS оношийн код</span>
+      <input class="dn-input" style="flex:1;height:30px;padding:4px 10px;" type="text"
+        placeholder="Жишээ: K86 · J06.9 · E11 ..." value="DS: K86"/>
+      <span style="font-size:.68rem;color:var(--muted);white-space:nowrap;">Оношийн нэр:</span>
+      <input class="dn-input" style="flex:2;height:30px;padding:4px 10px;" type="text"
+        placeholder="Оношийн нэрийг монголоор бичнэ үү"/>
+    </div>
+
+    <div class="dn-grid">
+      <div class="dn-field">
+        <label>Эмчийн дүгнэлт ба тайлбар</label>
+        <textarea class="dn-input dn-textarea" placeholder="Үзлэгийн ерөнхий дүгнэлт, онцгой анхаарах зүйлс, эмчилгээний чиглэл...&#10;&#10;Жишээ: Үйлчлүүлэгч ерөнхийдөө эрүүл. LDL холестерин оптимал хэмжээнээс бага зэрэг давсан тул хоол дэглэм, дасгалын журмаар засна. Сонсголын нарийн шалгалт хийлгэхийг шаардлагатай гэж үзлээ.">DS: K86
+Цаашид:
+-Умайн хүзүүний эсийн шинжилгээ өгөх
+-HPV genotype үзүүлэх</textarea>
+      </div>
+      <div class="dn-field">
+        <label>Эмчийн зөвлөмж (нэмэлт)</label>
+        <textarea class="dn-input dn-textarea" placeholder="Үйлчлүүлэгчид хэлэх нэмэлт зөвлөмж, анхааруулга...&#10;&#10;Жишээ: Жил бүр урьдчилан сэргийлэх үзлэгт хамрагдаж хэвшээрэй. Шинэ шинж тэмдэг илэрвэл хугацаанаас өмнө эмчид хандаарай.">Жил бүр урьдчилан сэргийлэх үзлэгт хамрагдаж хэвшээрэй.</textarea>
+      </div>
+    </div>
+
+    <div class="dn-sig-row">
+      <div class="dn-sig-field">
+        <label>Эмчийн нэр</label>
+        <input class="dn-sig-line" type="text" value="Uyanga Tsogtgerel" placeholder="Эмчийн овог нэр"/>
+      </div>
+      <div class="dn-sig-field">
+        <label>Гарын үсэг</label>
+        <input class="dn-sig-line" type="text" placeholder="________________________"/>
+      </div>
+      <div class="dn-sig-field">
+        <label>Огноо</label>
+        <input class="dn-sig-line" type="text" value="2026.04.15" placeholder="ЖЖЖЖ.СС.ӨӨ"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER P2 -->
+  <div class="footer">
+    <div class="footer-logo"><img src="https://cdn.siro.mn/8422c574-cf93-42f8-9e60-030cfeccbd0e/6b55d15c-9c88-49e1-9b90-f6134ee7ac90.svg" alt="Нура"></div>
+    <div class="footer-center">"Эрүүл энхийг хүсье!" · nura.mn · Хуудас 2/2</div>
+    <div class="footer-doc">
+      <div class="dn">Uyanga Tsogtgerel</div>
+      <div class="dr">Эмч · MedOn Medical</div>
+      <div class="sig">Гарын үсэг: _________________________ · 2026.04.15</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
